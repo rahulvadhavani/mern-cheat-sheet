@@ -149,7 +149,9 @@
 	=>hint()
 	~ db.users.find({gender:"M"},{user_name:1,_id:0}).hint({gender:1,user_name:1}).explain()  
 
-	Note: The $hint operator forces the query optimizer to use the specified index to run a query. This is particularly useful when you want to test performance of a query with different indexes. For example, the following query specifies the index on fields gender and user_name to be used for this query −
+	Note: The $hint operator forces the query optimizer to use the specified index to run a query. This is particularly useful when you want to test
+	performance of a query with different indexes. For example, the following query specifies the index on fields gender and 
+	user_name to be used for this query −
 
 	-----------------------------------------------------------------------------------
 
@@ -189,7 +191,10 @@
 
 ===============MongoDB-Replication=================
 
-  =>Replication is the process of synchronizing data across multiple servers. Replication provides redundancy and increases data availability with multiple copies of data on different database servers. Replication protects a database from the loss of a single server. Replication also allows you to recover from hardware failure and service interruptions. With additional copies of the data, you can dedicate one to disaster recovery, reporting, or backup.
+  =>Replication is the process of synchronizing data across multiple servers. Replication provides redundancy and increases data 
+  availability with multiple copies of data on different database servers. Replication protects a database from the loss of a single server. 
+  Replication also allows you to recover from hardware failure and service interruptions. With additional copies of the data, 
+  you can dedicate one to disaster recovery, reporting, or backup.
 
   =>Why Replication?
   ----------------------------------------
