@@ -1,0 +1,228 @@
+=========#mongoDb#=========
+
+#Data modeling
+1)Embedded Data Model : In this model, you can have (embed) all the related data in a single document
+
+2)Normalized Data Model : In this model, you can refer the sub documents in the original document, using references
+
+#Datatype
+(1)String (2)Integer (3)Boolean (4)Double
+(4)Min/Max keys (5)Arrays (6)Timestamp
+(7)Null (8)Object (9)Symbol (10)Date
+(11)Object ID (12)Binary data 
+(13)Code :This datatype is used to store JavaScript code into the document
+(14)Regular expression :This datatype is used to store regular expression
+
+#CMD
+
+~ use {database name}  //create database or switch database
+~ db //show current DB
+~ show dbs //show DB lists
+~ db.dropDatabase() //drop the database
+~ db.createCollection(name, options)     //create collection
+  -----------options---------------
+	  note:options field is optional
+	  note:In MongoDB, you don't need to create collection. MongoDB creates collection automatically, when you insert some document.
+
+	  #capped (Boolean) :- Capped collection is a fixed size collection that automatically overwrites its oldest entries when it reaches its maximum size.
+
+	  #size (number) :- If capped is true, then you need to specify this field also
+
+	  #max (number) :- Specifies the maximum number of documents allowed in the capped collection.
+
+	  #autoIndexId (Boolean) :- automatically create index on _id field.s Default value is false.
+  ---------------------------------
+
+~ show collections (show current DB Collections)  
+~ db.COLLECTION_NAME.drop()//drop Collection ,return true
+
+===================insert Data=====================
+  ~ db.COLLECTION_NAME.insert(document)  
+  ---------------------------------
+	  #insert one document
+	  db.users.insert({
+		  title: "MongoDB Overview",
+		  description: "MongoDB is no sql database",
+		  by: "tutorials point",
+		  url: "http://www.tutorialspoint.com",
+		  tags: ['mongodb', 'database', 'NoSQL'],
+		  likes: 100
+	  })
+
+	  #insert multiple document
+	  db.post.insert([
+		{
+			title: "MongoDB Overview",
+			description: "MongoDB is no SQL database",
+			by: "tutorials point",
+			url: "http://www.tutorialspoint.com",
+			tags: ["mongodb", "database", "NoSQL"],
+			likes: 100
+		},
+		{
+			title: "nodejs Overview",
+			description: "nodejs is backend js",
+			by: "tutorials point",
+			url: "http://www.tutorialspoint.com",
+			tags: ["nodejs", "javascript"],
+			likes: 1000
+		}	
+	  ])
+  ---------------------------------
+
+  ~ db.COLLECTION_NAME.insertOne(document)   //insert only one document into a collection
+  ~ db.empDetails.insertMany([{...},{...}])  //insert multiple documents
+  #To insert the document you can use db.post.save(document) also
+
+===================================================
+
+=====================Read Data=====================
+
+  ~ db.COLLECTION_NAME.find()  //read all data from collection
+  ~ db.COLLECTION_NAME.find().pretty()  //To display the results in a formatted way
+  ~ db.COLLECTIONNAME.findOne({filter})  //read first matched data, filter is optional
+    ex. db.COLLECTIONNAME.findOne({title: "MongoDB Overview"})
+
+  ~ db.users.find({"name":"RV"}).pretty()   //where name 'RV'
+  ~ db.posts.find({"id":{$gt:90}}).pretty() //where id > 90
+  ~ db.users.find({"username":{$in:['Rahul','Samantha']}}).pretty() //where in query
+  ~ db.posts.find({ $and: [ {userId:1}, { id:{$lt:5} ] })  //where userId 1 and id<5 
+  ~ db.posts.find({ $or: [ {userId:1}, { id:{$lt:5} ] }) //where userId 1 or id<5 
+  ~ db.posts.find({"likes": {$gt:10}, $or: [{"by": "tutorials point"},{"title": "MongoDB Overview"}]}).pretty()  // A and or (b and c)
+  ~ db.empDetails.find({$nor:[{"First_Name": "rv"},{"Last_Name": "hey"}]}).pretty() //first name is not "rv" and last name is not "hey"
+
+  ---------------------------
+	  =>$gte:90  //where id >= 90
+	  =>$lt:90  //where id < 90
+	  =>$lte:90  //where id <= 90
+	  =>$ne:90  //where id != 90
+	  =>$in:['Rahul','Samantha']  //where in username
+	  =>$nin:['Rahul','Samantha']  //where not in username 
+	  =>$and: [ {userId:1}, { id:{$lt:5} ]  //where userId 1 and id<5 
+	  =>$or: [ {userId:1}, { id:{$lt:5} ]   //where userId 1 or id<5
+  ---------------------------
+
+  =>MongoDB-Projection
+  ~ db.COLLECTION_NAME.find({},{name:1,age:1})  //select name and age
+
+	#Note : find() method accepts second optional parameter that is list of fields that you want to retrieve
+	fields value 1 is used to show the field while 0 is used to hide the fields
+
+	=>Limit()  //To limit the records
+	=>Skip() //To skip the records
+
+	~db.COLLECTION_NAME.find().limit(NUMBER).skip(NUMBER)  //pagination
+
+	=>sort()   //To sort documents in MongoDB
+	~ db.COLLECTION_NAME.find().sort({KEY:1})   //1 for ascending order while -1 is used for descending
+
+	=>createIndex()  //To create an index
+
+	~ db.COLLECTION_NAME.createIndex({KEY:1})  //1 is for ascending order and for descending order use -1.
+	~ db.COLLECTION_NAME.createIndex({"title":1,"description":-1}) //create index for multiple fields
+	~ db.users.createIndex({"address.city":1,"address.state":1})  //create index on Sub-Document fields
+	
+	-----------------------------------------------------
+	#This method also accepts list of options (which are optional). Following is the list
+	-background  (Boolean) //Builds the index in the background so that building an index does not block other database activities. default false
+	-unique  (Boolean)  //error on duplication on field
+	-expireAfterSeconds (integer)  //Specifies a value, in seconds, as a TTL to control how long MongoDB retains documents in this collection.
+	-----------------------------------------------------
+
+	=>dropIndex()  //drop the index
+	~ db.COLLECTION_NAME.dropIndex({email:1})  //drop index from email field
+
+	=>dropIndexes()  //deletes multiple (specified) indexes
+	~ db.COLLECTION_NAME.createIndex({"title":1,"description":-1})  //drop index from title and description
+
+	=>aggregate()
+	~db.mycol.aggregate([{$group : {_id : "$by_user", num_tutorial : {$sum : 1}}}])  //list of how many tutorials are written by each user
+
+	#note : In SQL count(*) and with group by is an equivalent of MongoDB aggregation
+	#Note :Sql equivalent query for the above use case will be select by_user, count(*) from mycol group by by_user.
+
+	ex.  https://prnt.sc/SdAzS1OQhBWO
+
+	=>explain()   //provide details about query
+	~db.users.find({gender:"M"},{user_name:1,_id:0}).explain()  
+
+	=>hint()
+	~ db.users.find({gender:"M"},{user_name:1,_id:0}).hint({gender:1,user_name:1}).explain()  
+
+	Note: The $hint operator forces the query optimizer to use the specified index to run a query. This is particularly useful when you want to test performance of a query with different indexes. For example, the following query specifies the index on fields gender and user_name to be used for this query −
+
+	-----------------------------------------------------------------------------------
+
+===================================================
+
+====================Update Data====================
+
+	~db.COLLECTION_NAME.update(SELECTION_CRITERIA, UPDATED_DATA)
+
+
+	ex.
+	~ db.users.update({'email':'hey@rv.com'},{$set:{'email':'rv@a.com'}})  //update user where email is 'hey@rv.com'
+	~ db.users.update({'email':'hey@rv.com'},{$set:{'email':'rv@a.com'}},{multi:true})  //update all user where email is 'hey@rv.com'
+	~ db.COLLECTION_NAME.save({_id:ObjectId(),NEW_DATA}) //The save() method replaces the existing document with the new document
+
+	#Note : By default, MongoDB will update only a single document. To update multiple documents, you need to set a parameter 'multi' to true.
+
+	#findOneAndUpdate()   //find fist doc and update it
+	~ db.user.findOneAndUpdate({email: 'rv@a.com'},{ $set: { username: 'heyrv',email: 'radhika@rv.com'}})  //update data and return old document
+
+	#updateOne() //update single document
+	~ db.user.updateOne({email: 'rv@a.com'},{ $set: { username: 'heyrv',email: 'radhika@rv.com'}})  //update single document
+
+	#updateMany() //bulk update document
+	~ db.user.updateMany({email: 'rv@a.com'},{ $set: { username: 'heyrv',email: 'radhika@rv.com'}})  //update multiple document
+
+===================================================
+
+====================Delete Data====================
+
+	~db.COLLECTION_NAME.remove(DELLETION_CRITTERIA) //delete documents
+
+	~db.users.remove({'email':'rv@a.com'})  //remove all matched documents 
+	~db.users.remove({'email':'rv@a.com'},1)  //remove first matched documents 
+	~db.users.remove({})  //remove all documents from collections 
+===================================================
+
+===============MongoDB-Replication=================
+
+  =>Replication is the process of synchronizing data across multiple servers. Replication provides redundancy and increases data availability with multiple copies of data on different database servers. Replication protects a database from the loss of a single server. Replication also allows you to recover from hardware failure and service interruptions. With additional copies of the data, you can dedicate one to disaster recovery, reporting, or backup.
+
+  =>Why Replication?
+  ----------------------------------------
+	-To keep your data safe
+	-High (24*7) availability of data
+	-Disaster recovery
+	-No downtime for maintenance (like backups, index rebuilds, compaction)
+	-Read scaling (extra copies to read from)
+	-Replica set is transparent to the application
+  ----------------------------------------
+
+  ....pending
+===================================================
+
+==============MongoDB-backup-restore===============
+
+	->goto bin dir of mongodb and open CMD with Admin permission
+	~ mongodump  //backup the database
+	~ mongorestore  //restore database
+
+
+  ....pending
+===================================================
+
+==================MongoDB-Advance==================
+
+	~db.products.findAndModify({ 
+	   query:{_id:2,product_available:{$gt:0}}, 
+	   update:{ 
+	      $inc:{product_available:-1}, 
+	      $push:{product_bought_by:{customer:"rob",date:"9-Jan-2014"}} 
+	   }    
+	})
+
+	//find product availability and update the transaction data if availability is greater than 1
+===================================================
