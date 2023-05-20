@@ -1,0 +1,874 @@
+source file :  https://docs.google.com/document/d/1qVqYzH4AjNuoLXEYA1yz0HUct9rIYszm97s2qtMahSo/edit?usp=sharing
+
+
+
+React
+
+
+=>Install react
+~ npm create-react-app {app-name}       (using npx)
+
+~ npm install -g  create-react-app  (using npm)
+~ create-react-app {app-name}
+
+
+=>JSX (javascript XML)
+It’s same as html but we can return it with javascript
+Jsx can return only single element so we need to enclose the multiple tag in single component
+Use div or use react-fragment( <></> )  for enclose the multiple tags
+Replace class by className (camelcase) and for by htmlFor 
+Pass style like style={{color:’red’, backgroundColor:gray}} and other parameter by camelcase 
+=>components
+We can use .js or .jsx extension for components file name there are two types of components
+Functional components 
+Class components 
+NOTE : We can not changes the props value we can only read value props is immutable
+
+=> Functional components 
+Stateless component
+Mostly used for UI related rendering
+There is no any lifecycle method in this components but we can achieve the that using hooks
+
+EX.
+
+
+
+function FunctionalComponent(prop){
+    console.log(prop.children);
+    console.log(prop.data);
+    return (<h1 style={{textAlign:'center',color:'red'}}>Hello RV</h1>)
+}
+
+
+export default FunctionalComponent
+
+
+
+
+=> Class components
+Stateful components or smart component
+Mostly used for implements logic and state
+This component have render and other lifecycle method
+
+
+
+
+
+
+
+EX.
+
+
+
+import React, { Component } from 'react'
+
+
+export default class ClassComponent extends Component {
+
+
+  render() {
+    console.log('ClassComponent');
+    console.log(this.props.data);
+    return (
+      <>
+      <div>{this.state.user.name}</div>
+      <div>{this.state.user.age}</div>
+      </>
+    )
+  }
+}
+
+
+
+=>State
+State is managed within components
+We can set and get the state
+We can use state in functional components using hooks
+
+=> State  in class components
+
+
+
+import React, { Component } from 'react'
+
+
+export default class ClassComponent extends Component {
+  constructor(){
+    super()
+    this.state = {
+    user: {
+      name : 'rv',
+      age : 24
+    }
+    }
+  }
+
+
+  handleClick( ) {  
+    this.setState( {
+      user:{
+        name : 'hey rv',
+        age : '22'
+      }
+    })
+  }
+
+
+  render() {
+     return (
+      <>
+      <div>{this.state.user.name}</div>
+      <div>{this.state.user.age}</div>
+      <button onClick={()=>{this.handleClick()}}>Update</button>
+      </>
+    )
+  }
+}
+
+
+=> State  in functional components
+
+
+import React, { Component } from 'react'
+export default class ClassComponents extends Component {
+   constructor() {
+       super()
+       this.state = { message: '' };
+   }
+   handleChange = (e) => {
+       this.setState({ message: e.target.value });
+   }
+   render() {
+       return (
+           <div className='text-center'>
+               <div>ClassComponents</div>
+               <span className='text-success'>{this.state.message}</span>
+               <input type='text' placeholder='Game changer' onChange={this.handleChange} value={this.message} />
+           </div>
+       )
+   }
+}
+
+
+=>Events and event handler
+Used for interact with UI and collect data from form
+All event is html event and you can handle it by handler function
+Ex. onClick, onChange, onSubmit, onMouseUp
+Event handling should be a function not function call
+
+ 
+
+
+=>Event  in class components
+We can not access the state directly in handler function so we can either use arrow function or bind the event with class event  
+
+import React, { Component } from 'react'
+
+
+export default class ClassComponents extends Component {
+   constructor(props) {
+       super(props)
+       //set props value in state
+       this.state = { message: '', value: this.props.data };
+       // this.handleChange = this.handleChange.bind(this);  //bind method
+   }
+   handleChange = (event) => {   //using arrow function
+       this.setState({ message: event.target.value });
+   }
+
+
+   // handleChange(event) {  //using bind method
+   //     this.setState({ message: event.target.value });
+   // }
+
+
+   handleClick = (event) => {  //handle event default behaviour
+       event.preventDefault()
+       this.setState({ value: '👉️ ' + this.props.data });
+   }
+
+
+   render() {
+       return (
+           <div className='text-center'>
+               <div>ClassComponents {this.props.value}- {this.state.value}</div>
+               <a className='btn btn-dark' href='google.com'   onClick={this.handleClick}>Handle link</a><hr />
+               <span className='text-success'>{this.state.message}</span>
+               <input type='text' placeholder='Game changer' onChange={this.handleChange} value={this.message} />
+           </div>
+       )
+   }
+}
+
+
+=>Event  in functional components
+
+
+export default function FunctionalComponents() {
+   const [message, setMessage] = useState('');
+   const handleChange = (e) => {
+       setMessage(e.target.value)
+   }   
+   return (
+       <div className='text-center'>
+           <input onChange={handleChange} value={message} type='text' placeholder='change here'></input><span className='text-success'>{message}</span>
+           <hr></hr>
+       </div >
+   )
+}
+
+
+
+=>List handling
+import React, { Component } from 'react'
+
+
+export default class ListComponents extends Component {
+
+
+   render() {
+       const myArray = ['Rv', 'Rahul', 'Heyrv', 'Harvy', 'heyrv'];
+       return (
+           <>
+               <div>ListComponents</div>
+               <ul>
+                   {myArray.map((item, key) => <li key={key}>{item}</li>)}
+               </ul>
+           </>
+       )
+   }
+}
+
+
+=>Example Todo list
+
+import React, { Component } from 'react'
+import '../assets/css/todo.css';
+
+
+
+
+export default class TodoComponents extends Component {
+
+
+   constructor(props) {
+       super(props)
+       this.state = {
+           todos: [
+               { id: 1, title: 'Learn react prop' },
+               { id: 2, title: 'Learn react compoents' },
+           ],
+           todo_input: '',
+           error: '',
+       };
+   }
+   handleItemAdd = (e) => {
+       e.preventDefault()
+       if (this.state.todo_input.length == 0) {
+           this.setState({ error: 'Please fill the input first' });
+           return false
+       }
+       let id = this.state.todos.length > 0 ? (this.state.todos[this.state.todos.length - 1].id + 1) : 0;
+       let newItem = { id: id, title: this.state.todo_input };
+       this.setState({ todos: [...this.state.todos, newItem] })
+       this.setState({ todo_input: '' })
+   }
+   handleChange = (e) => {
+       if (e.target.value.length > 0) {
+           this.setState({ error: '' })
+       }
+       this.setState({ todo_input: e.target.value })
+   }
+   handleDelete = (event) => {
+       this.setState(prevState => ({
+           todos: prevState.todos.filter(item => Number(item.id) !== Number(event.target.id))
+       }));
+   }
+
+
+   render() {
+       return (
+           <>
+               <div className="container">
+                   <div className="row justify-content-center align-items-center main-row">
+                       <div className="col shadow main-col bg-white">
+                           <div className="row pt-2 bg-dark text-white">
+                               <h4>Todo App</h4>
+                           </div>
+                           <form className="form-group row justify-content-between text-white pt-3" onSubmit={this.handleItemAdd}>
+                               <div className='col-sm-12 col-md-10'>
+                                   <input
+                                       onChange={this.handleChange}
+                                       type="text"
+                                       className="form-control"
+                                       placeholder='Add todo'
+                                       value={this.state.todo_input}
+                                   />
+                                   {this.state.error && <span className='text-danger'>{this.state.error}</span>}
+
+
+                               </div>
+                               <div className='col-sm-12 col-md-2 text-end'>
+                                   <button
+                                       type="submit"
+                                       className="w-100 btn btn-dark mb-2 ml-2"
+                                   >
+                                       Add
+                                   </button>
+                               </div>
+                           </form>
+
+
+                           <div className="form-group row justify-content-between text-white pt-3">
+                               <div className="col col-12 p-2 todo-item" todo-id={0}>
+                                   {this.state.todos.length == 0 ? <div><h4 className='text-center text-dark'>No data found</h4></div> : ''}
+                                   {this.state.todos.map((todo) => {
+                                       return <div key={todo.id} className="input-group">
+                                           <input
+                                               type="text"
+                                               readOnly
+                                               className="mb-2 form-control false "
+                                               value={todo.title}
+                                           />
+                                           <div className="input-group-append px-1">
+                                               <button
+                                                   id={todo.id}
+                                                   className="btn btn-dark text-danger"
+                                                   onClick={this.handleDelete}
+                                               >
+                                                   &#x274C;
+                                               </button>
+                                           </div>
+                                       </div>
+                                   })}
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </>
+       )
+   }
+}
+
+
+
+
+
+
+=>Styling
+We can add style by three different way
+Inline , external  and css module 
+
+1)  external 
+Just import file and apply by className
+Ex.   import '../assets/css/todo.css';
+
+2)  Inline
+Just ass attr style={} and pass style object with camelcase key
+Ex.   <div style={{backgroundColor:gray, color:red}} >Hello</div>
+
+2)  Css Module
+Use this approach when you need to apply css only for specific component level
+Ex.    import todoCss from  '../assets/css/todo.css';
+Ex.   <div className={todoCss.list_title} >Hello</div>
+
+
+=>Form Handling
+
+
+
+import React, { Component } from 'react'
+
+
+export default class Form extends Component {
+   user_input_init = {
+       first_name: '',
+       last_name: '',
+       email: '',
+       success: false,
+   };
+   constructor() {
+       super();
+       this.state = {
+           user_input: this.user_input_init
+       }
+   }
+   handleSubmit = (event) => {
+       event.preventDefault()
+       console.log(this.state.user_input);
+       // handle submission logic here
+       // reset input field
+       this.setState({
+           user_input: this.user_input_init,
+           success: true
+       });
+       setTimeout(() => this.setState({ success: false }), 3000)
+   }
+
+
+   handleChange = (event) => {
+       event.preventDefault()
+       const name = event.target.name;
+       const value = event.target.value;
+       this.setState(prevState => ({
+           user_input: {
+               ...prevState.user_input,
+               [name]: value
+           }
+       }));
+   }
+
+
+   render() {
+       return (
+           <div className='contailer p-5'>
+               <div className="card">
+                   <h5 className="card-header">User Form</h5>
+                   {this.state.success && <span className='m-2 alert alert-success'>Form submitted successfully</span>}
+
+
+                   <div className="card-body">
+                       <form onSubmit={this.handleSubmit}>
+                           <div className="row">
+                               <div className="form-group col-md-6 mb-2">
+                                   <label htmlFor="first_name">First Name</label>
+                                   <input required type="text" onChange={this.handleChange} className="form-control" name="first_name" placeholder="Enter first name" value={this.state.user_input.first_name} />
+                               </div>
+                               <div className="form-group col-md-6 mb-2">
+                                   <label htmlFor="last_name">Last Name</label>
+                                   <input required type="text" onChange={this.handleChange}
+                                       className="form-control" name="last_name" placeholder="Enter last name" value={this.state.user_input.last_name} />
+                               </div>
+                           </div>
+                           <div className="form-group mb-2">
+                               <label htmlFor="email">Email</label>
+                               <input onChange={this.handleChange} type="email" className="form-control" name="email" placeholder="Email" required value={this.state.user_input.email} />
+                           </div>
+                           <div className='text-center mt-4'>
+                               <button type="submit" className="text-center btn btn-dark">Submit</button>
+                           </div>
+                       </form>
+                   </div>
+               </div>
+           </div >
+       )
+   }
+}
+
+
+
+
+=>Routing
+Need to install route package via npm install react-router-dom
+Then just use router package components in App.js
+And replace all page link by <Navlink>
+
+Ex.    App.js
+
+
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from '../pages/Home';
+import Todo from '../pages/Todo';
+
+
+
+
+function App() {
+ return (
+   <>
+     <Router>
+       <Header></Header>
+       <main role="main" style={{ width: '100%', height: '80vh' }}>
+         <div className="container mt-5 pt-5">
+           <div className='album bg-light' style={{ minHeight: '80vh' }}>
+             <Routes>
+               <Route exact path="/" element={<Home></Home>} />
+               <Route path="/todo" element={<Todo></Todo>} />
+             </Routes>
+           </div>
+         </div>
+       </main>
+       <Footer></Footer>
+     </Router>
+   </>
+ );
+}
+export default App;
+
+
+
+
+Ex.    Navbar.js
+
+
+
+import { NavLink } from 'react-router-dom'
+
+ <li className="nav-item">
+  <NavLink to="/todo" className={'nav-link' + (window.location.pathname === '/todo' ? ' active' : '')}>Todo</NavLink>
+ </li>
+<li className="nav-item">
+<NavLink to="/form" className={'nav-link' + (window.location.pathname === '/form' ? ' active' : '')}>Form</NavLink>
+</li>
+
+
+
+
+
+
+=>Lifecycle method
+
+ 
+=>Mounting
+Constructor method called first when component load
+static getDerivedStateFromProps(props, state) method called after the Constructor and it return props and state and throw error if state is defined in component
+Render method called after the getDerivedStateFromProps and it render the UI
+And at the last componentDidMount called after the mounting done
+If child component used in the current component then all method of parent component executed first except componentDidMount
+Parent and child component all mounting method called first then componentDidMount called parent component then child component 
+Use this componentDidMount lifecycle for api calls 
+
+=>Updating
+Render method called first when changed the state value
+After render componentDidMount(previousPrope, previousState ) method called
+componentDidMount provide previousPrope and previousState values
+
+
+=>static getDerivedStateFromProps(props, state)
+This method used when our state value is dependent on props value and we want update and apply any logic on state value
+This method called after the constructor method
+
+
+=>API call
+Install api or call fetch api
+~ npm install axios
+import axios from 'axios';
+
+Ex.  
+
+
+import React, { Component } from 'react'
+import axios from 'axios'
+
+
+export default class PhotosListComponents extends Component {
+   constructor(props) {
+       super(props)
+       this.state = { photos: [] }
+   }
+   componentDidMount() {
+       axios.get('https://jsonplaceholder.typicode.com/album/1/photos')
+           .then(response => this.setState({ photos: response.data }))
+           .catch(error => console.log(error));
+   }
+
+
+   addNewPost = () => {
+       const newPost = JSON.stringify({ title: 'foo', body: 'bar', userId: 1 });
+       axios.post('https://jsonplaceholder.typicode.com/posts', newPost)
+           .then(response => console.log(response.data))
+           .catch(error => console.log(error));
+   }
+
+
+   render() {
+       return (
+           < div className="album py-5 bg-body-tertiary" >
+               <h1 className='text-secondary text-center p-3'>Images List From API<button onClick={this.addNewPost} className='btn btn-dark ml-2'>Add</button></h1>
+               <div className="container">
+                   <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                       {this.state.photos.map((photo) => {
+                           return <div key={photo.id} className="col">
+                               <div className="card shadow-sm">
+                                   <img preserveAspectRatio="xMidYMid slice" width="100%" height={225} src={photo.url} className="bd-placeholder-img card-img-top" />
+                                   <div className="card-body">
+                                       <p className="card-text">
+                                           {photo.title}
+                                       </p>
+                                   </div>
+                               </div>
+                           </div>
+                       })}
+                   </div>
+               </div>
+           </div >
+       )
+   }
+}
+
+
+
+
+
+=>Hooks
+Hook are the special type of function that can give you a power to use react-lifecycle in functional components
+Use it when you need to use states in functional components 
+Ex useState, useEffect
+
+=>useState
+Used when we need to set and update the state in functional component 
+Set state also provide the previous state value so we can update the logic of change
+It's useful when our update state logic in the loop
+Ex.  
+
+
+const handleClick = () => {
+   for (let index = 0; index < 10; index++) {
+      setCount(previousCount => previousCount + 1)
+   }
+}
+Initial value is 0 and output will be increased by 10
+
+
+=>useEffect
+Used when we need to set some logic after on render, update or delete the state
+Use effect return function itself
+useEffcet accept second argument as array of state that we need to run this function on that state update
+By default useEffect run on every state update if you not pass second argument 
+
+Ex.  
+
+
+
+import React, { useEffect, useState } from 'react'
+
+
+export default function FunctionalComponents() {
+   const [message, setMessage] = useState('');
+   const handleChange = (e) => {
+       setMessage(e.target.value)
+   }
+   const [count, setCount] = useState(0);
+   const handleClick = () => {
+       setCount(count + 1)
+   }
+
+
+   useEffect(() => {
+       console.log('useEffect called');
+   }, [message, count]);
+   return (
+       <div className='text-center bg-white p-2 m-3'>
+           <div className="w-100 p-2">FunctionalComponents</div>
+           <input onChange={handleChange} value={message} type='text'></input>
+           <span className='text-success'>{message}</span>
+           <hr></hr>
+           <h2 className='text-danger'>{count}</h2>
+           <button className='btn btn-dark' onClick={handleClick}>Change</button>
+       </div >
+   )
+}
+
+
+
+=>Context API
+Context provides a way to pass data through the component tree without having to pass props down manually at every level.
+Context is created using the createContext() method, which returns an object with two components: a Provider and a Consumer.
+The Provider component is used to wrap the part of the component tree where you want to make the context available. It takes a value prop, which can be any JavaScript value.
+Any component that needs to access the context can use the Consumer component to do so. The Consumer component takes a function as a child, which receives the context value as an argument.
+When the context value changes, all components that depend on it will automatically re-render.
+You can also use the useContext() hook to access the context value in functional components.
+
+Ex.
+
+Provider component
+
+import React, { Component } from 'react'
+import { Provider } from '../../context/context'
+import ContextBComponent from './ContextBComponent';
+
+
+export default class ContextAComponent extends Component {
+   constructor(props) {
+       super(props)
+       this.state = {
+           user: {
+               first_name: 'Rahul',
+               last_name: 'vadhvani',
+               email: 'rahulvadhvani@gmail.com',
+           }
+       }
+   }
+   updateData = () => {
+       this.setState({
+           user: {
+               first_name: 'rv',
+               last_name: 'vadhvani',
+               email: 'rv@gmail.com',
+           }
+       })
+   }
+   render() {
+       const contextData = {
+           data: this.state,
+           handleCheck: this.updateData
+       }
+       return (
+           <>
+               <div>ContextAComponent</div>
+               <div className='text-light p-4 bg-success'>
+                   <p>{this.state.user.first_name} {this.state.user.last_name}</p>
+                   <p>{this.state.user.email}</p>
+               </div>
+               <Provider value={contextData}>
+                   <ContextBComponent></ContextBComponent>
+                   <button className='btn btn-dark mx-auto' onClick={this.updateData} >update</button>
+               </Provider>
+           </>
+       )
+   }
+}
+
+
+
+
+Consumer component
+
+import React, { Component } from 'react'
+import { Consumer } from '../../context/context'
+
+
+export default class ContextBComponent extends Component {
+   render() {
+       return (
+           <>
+           <div className='pt-4'>ContextBComponent</div>
+           <Consumer>
+           {
+            ({ data, handleCheck }) => {
+               return <>
+                <div className='text-light p-4 bg-info'>
+                <p>{data.user.first_name} </p><p>{data.user.last_name} </p>
+                <p>{data.user.email}</p>
+                </div>
+               <button className='m-2 btn btn-warning' onClick={handleCheck}>
+                Update
+               </button>
+               </>
+             }
+            }
+           </Consumer>
+          </>
+       )
+   }
+}
+
+
+
+
+
+=>Higher Order Component
+Its used when we need to change in our component and add some extra functionality in common component  similar like map function that return some add on object 
+
+Ex.
+
+
+import React from 'react';
+
+
+const withLoggedIn = (Component) => {
+ return class extends React.Component {
+   constructor(props) {
+     super(props);
+
+
+     this.state = {
+       isLoggedIn: false,
+     };
+   }
+
+
+   componentDidMount() {
+     // Code to check if user is logged in goes here
+     const isLoggedIn = true;
+     this.setState({ isLoggedIn });
+   }
+
+
+   render() {
+     return (
+       <Component
+         {...this.props}
+         isLoggedIn={this.state.isLoggedIn}
+       />
+     );
+   }
+ };
+};
+
+
+export default withLoggedIn;
+
+
+
+
+
+
+import React from 'react';
+import withLoggedIn from './withLoggedIn';
+
+
+class MyComponent extends React.Component {
+ render() {
+   const { isLoggedIn } = this.props;
+
+
+   return (
+     <div>
+       {isLoggedIn ? (
+         <p>Welcome, user!</p>
+       ) : (
+         <p>Please log in to continue.</p>
+       )}
+     </div>
+   );
+ }
+}
+
+
+export default withLoggedIn(MyComponent);
+
+
+
+
+
+=>Pass Data From Child To Parent
+We can pass data from child to parent and handle rest of the optration in parent component
+
+Ex
+
+
+
+function ParentComponent() {
+ const [count, setCount] = useState(0);
+
+
+ function handleChildClick() {
+   setCount(count + 1);
+ }
+
+
+ return (
+   <div>
+     <p>Count: {count}</p>
+     <ChildComponent onClick={handleChildClick} />
+   </div>
+ );
+}
+
+
+
+
+
+
+function ChildComponent({ onClick }) {
+ return (
+   <button onClick={onClick}>
+     Click me
+   </button>
+ );
+}
+
+
+
